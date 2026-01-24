@@ -1,0 +1,17 @@
+# Environments
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Local DB (optional to ignore)
+data/shop.db
+
+# IDE
+.idea/
+.vscode/
