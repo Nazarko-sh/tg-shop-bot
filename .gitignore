@@ -1,17 +1,30 @@
-# Environments
-venv/
+# --- Python / venv ---
 .venv/
-
-# Python
+venv/
+ENV/
+env/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.log
 
-# Secrets
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- Local config / secrets ---
 .env
 
-# Local DB (optional to ignore)
-data/shop.db
+# --- Database ---
+shop.db
+*.sqlite
+*.sqlite3
 
-# IDE
-.idea/
-.vscode/
+# --- aiogram / runtime caches ---
+*.session
+*.session-journal

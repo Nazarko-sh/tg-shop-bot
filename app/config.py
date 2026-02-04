@@ -1,27 +1,43 @@
 from dataclasses import dataclass
-import os
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
-load_dotenv()
 
-@dataclass(frozen=True)
+@dataclass(slots=True)
 class Config:
     bot_token: str
-    admin_chat_id: int
+    admin_id: int
     db_path: str
+    support_contact: str
+    manual_payment_details: str
 
-def load_config() -> Config:
-    bot_token = os.getenv("BOT_TOKEN", "").strip()
-    admin_chat_id_str = os.getenv("ADMIN_CHAT_ID", "").strip()
-    db_path = os.getenv("DB_PATH", "data/shop.db").strip()
 
+def load_config(path: str = ".env") -> Config:
+    env = dotenv_values(path)
+
+    bot_token = (env.get("BOT_TOKEN") or "").strip()
     if not bot_token:
         raise RuntimeError("BOT_TOKEN is missing in .env")
-    if not admin_chat_id_str or not admin_chat_id_str.isdigit():
-        raise RuntimeError("ADMIN_CHAT_ID is missing/invalid in .env (must be integer)")
+
+    admin_id_raw = (env.get("ADMIN_ID") or "").strip()
+    if not admin_id_raw.isdigit():
+        raise RuntimeError("ADMIN_ID must be a number in .env")
+    admin_id = int(admin_id_raw)
+
+    db_path = (env.get("DB_PATH") or "shop.db").strip()
+
+    support_contact = (env.get("SUPPORT_CONTACT") or "@support").strip()
+
+    manual_payment_details = (env.get("MANUAL_PAYMENT_DETAILS") or "").strip()
+    if not manual_payment_details:
+        manual_payment_details = "Bank: 0000 0000 0000 0000\nName: YOUR NAME\nComment: Order #{order_id}"
+
+    # dotenv_values keeps literal \n, convert to real newlines
+    manual_payment_details = manual_payment_details.replace("\\n", "\n")
 
     return Config(
         bot_token=bot_token,
-        admin_chat_id=int(admin_chat_id_str),
+        admin_id=admin_id,
         db_path=db_path,
+        support_contact=support_contact,
+        manual_payment_details=manual_payment_details,
     )
